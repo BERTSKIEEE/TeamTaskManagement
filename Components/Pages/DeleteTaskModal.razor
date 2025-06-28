@@ -1,0 +1,28 @@
+﻿@if (IsVisible)
+{
+    <div class="modal-backdrop">
+        <div class="modal-box">
+            <h3>Are you sure you want to delete this Task?</h3>
+            <div class="modal-buttons">
+                <button class="cancel-btn" @onclick="OnCancel">Cancel</button>
+                <button class="confirm-btn" @onclick="OnConfirm">Delete</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnDeleteConfirmed { get; set; }
+    [Parameter] public EventCallback OnCancelClicked { get; set; }
+
+    private async Task OnConfirm()
+    {
+        await OnDeleteConfirmed.InvokeAsync();
+    }
+
+    private async Task OnCancel()
+    {
+        await OnCancelClicked.InvokeAsync();
+    }
+}

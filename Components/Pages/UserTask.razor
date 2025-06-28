@@ -1,0 +1,119 @@
+﻿@page "/usertask"
+@layout ProjectManagerLayout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Task Management</PageTitle>
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleNav()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> <!-- Bootstrap user icon -->
+        <span>USER</span>
+    </div>
+</nav>
+<div class="backbot">
+    <button class="back" @onclick="GoBack">
+        <i class="bi bi-arrow-left"></i>
+        <span>BACK</span>
+    </button>
+</div>
+<div class="top-controls">
+    <h2>Title of the Project</h2>
+</div>
+
+<div class="container">
+    <div class="board">
+        @foreach (var status in new[] { "Backlog", "On-Going", "On-Hold", "Done" })
+        {
+            <div class="column"
+            ondragover="allowDrop(event)"
+            @ondrop="@(e => OnDropHandler(e, status))">
+                <div class="header">@status.ToUpper()</div>
+                <div class="content">
+                    @foreach (var task in tasks.Where(t => t.Status == status))
+                    {
+                        <div class="task-card"
+                        draggable="true"
+                        @ondragstart="@(e => OnDragStartHandler(e, task.TaskTitle))">
+                            <strong>@task.TaskId</strong><br />
+                            <strong>@task.TaskTitle</strong><br />
+                            <small>@task.Description</small><br />
+                            <span class="severity">@task.Severity</span>
+                            <div class="date">@task.CreatedDate</div>
+                        </div>
+                    }
+                </div>
+            </div>
+
+        }
+    </div>
+    <div class="comments">
+        <div class="header">Comments</div>
+        <textarea placeholder="Write a Comment here" @bind="newComment"></textarea>
+        <button class="publish-btn" @onclick="PublishComment">Publish</button>
+        <ul>
+            @foreach (var comment in comments)
+            {
+                <li>@comment</li>
+            }
+        </ul>
+    </div>
+</div>
+@code {
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/userproject", true);
+    }
+    private string newComment;
+    private List<string> comments = new();
+
+    private void PublishComment()
+    {
+        if (!string.IsNullOrWhiteSpace(newComment))
+        {
+            comments.Add(newComment);
+            newComment = string.Empty;
+        }
+    }
+    private List<Task> tasks = new()
+{
+    new Task {TaskId = 1, TaskTitle = "Create Login", Description = "To authorized the users to login in website", Severity = "Medium" , CreatedDate = "03-21-25", Status = "Backlog" }
+};
+
+    public class Task
+    {
+        public int TaskId { get; set; }
+        public string TaskTitle { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string CreatedDate { get; set; }
+        public string Status { get; set; } = "Backlog";
+    }
+    private string? draggedTaskTitle;
+
+    private void OnDragStartHandler(DragEventArgs e, string taskTitle)
+    {
+        draggedTaskTitle = taskTitle;
+    }
+
+    private void OnDragOver(DragEventArgs e)
+    {
+        // e.PreventDefault();
+    }
+
+    private void OnDropHandler(DragEventArgs e, string newStatus)
+    {
+        if (!string.IsNullOrEmpty(draggedTaskTitle))
+        {
+            var task = tasks.FirstOrDefault(t => t.TaskTitle == draggedTaskTitle);
+            if (task != null)
+            {
+                task.Status = newStatus;
+            }
+            draggedTaskTitle = null;
+        }
+    }
+}

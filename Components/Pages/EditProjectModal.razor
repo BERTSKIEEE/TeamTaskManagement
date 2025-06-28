@@ -1,0 +1,137 @@
+﻿@if (IsVisible)
+{
+    <div class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-content border border-dark">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title">PROJECT DETAILS</h5>
+                    <button type="button" class="close text-white" @onclick="Close">X</button>
+                </div>
+
+                <div class="modal-body">
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <label>ID</label>
+                            <input class="form-control" @bind="editproject.Id" readonly />
+                        </div>
+                        <div class="col-md-4">
+                            <label>PROJECT NAME</label>
+                            <input class="form-control" @bind="editproject.Name" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>DESCRIPTION</label>
+                            <textarea class="form-control" rows="3" @bind="editproject.Description"></textarea>
+                        </div>
+                        <div class="col-md-3">
+                            <label>START DATE</label>
+                            <input type="date" class="form-control" @bind="editproject.StartDate" />
+                        </div>
+                        <div class="col-md-3">
+                            <label>ENDING DATE</label>
+                            <input type="date" class="form-control" @bind="editproject.EndDate" />
+                        </div>
+                    </div>
+
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>SEVERITY</label>
+                            <select class="form-control" @bind="editproject.Severity">
+                                <option value="">Select</option>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group mb-3">
+                            <label>STATUS</label>
+                            <select class="form-control" @bind="editproject.Status">
+                                <option value="">Select Status</option>
+                                <option>Backlog</option>
+                                <option>On-Going</option>
+                                <option>On-Hold</option>
+                                <option>Done</option>
+                            </select>
+                        </div>
+
+                        <div class="col-md-9">
+                            <div class="borderemail">
+                                <label class="email">ADD MEMBERS</label>
+                                <div class="input-group mb-2">
+                                    <input type="email" class="form-member" placeholder="ENTER EMAIL" @bind="newMemberEmail" />
+                                    <button class="btn btn-outline-secondary" type="button" @onclick="AddMember">
+                                        Add <i class="fas fa-plus"></i>
+                                    </button>
+                                </div>
+                                <div class="addmembers">
+                                    @foreach (var member in editproject.Members)
+                                    {
+                                        <div>@member</div>
+                                    }
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button class="cancel btn btn-secondary" @onclick="Close">CANCEL</button>
+                    <button class="save btn btn-primary" @onclick="Save">SAVE</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback<EditProjectModel> OnSave { get; set; }
+    [Parameter] public EditProjectModel ProjectToEdit { get; set; }
+
+    private EditProjectModel editproject = new();
+    private string newMemberEmail;
+
+    protected override void OnParametersSet()
+    {
+        if (ProjectToEdit != null)
+        {
+            editproject = new EditProjectModel
+                {
+                    Id = ProjectToEdit.Id,
+                    Name = ProjectToEdit.Name,
+                    Description = ProjectToEdit.Description,
+                    StartDate = ProjectToEdit.StartDate,
+                    EndDate = ProjectToEdit.EndDate,
+                    Severity = ProjectToEdit.Severity,
+                    Status = ProjectToEdit.Status,
+                    Members = new List<string>(ProjectToEdit.Members)
+                };
+        }
+    }
+
+    private async Task Close() => await OnClose.InvokeAsync();
+
+    private async Task Save() => await OnSave.InvokeAsync(editproject);
+
+    private void AddMember()
+    {
+        if (!string.IsNullOrWhiteSpace(newMemberEmail) && !editproject.Members.Contains(newMemberEmail))
+        {
+            editproject.Members.Add(newMemberEmail);
+            newMemberEmail = string.Empty;
+        }
+    }
+
+    public class EditProjectModel
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string Status { get; set; }
+        public List<string> Members { get; set; } = new();
+    }
+}

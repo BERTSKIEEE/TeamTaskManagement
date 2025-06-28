@@ -1,0 +1,242 @@
+﻿@page "/projecttask/{ProjectId:int}"
+@layout ProjectManagerLayout
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+@* @inject IJSRuntime JS *@
+
+
+<PageTitle>Task Management</PageTitle>
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleSidebar()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> <!-- Bootstrap user icon -->
+        <span>PROJECT MANAGER</span>
+    </div>
+</nav>
+<div class="backbot">
+    <button class="back" @onclick="GoBack">
+        <i class="bi bi-arrow-left"></i>
+        <span>BACK</span>
+    </button>
+</div>
+<div class="top-controls">
+    <h2>@currentProject?.ProjectTitle</h2>
+
+
+    <button class="taskmodal" style="color:white;" @onclick="()=> showModal = true">Create Task</button>
+    <TaskModal IsVisible="@showModal" OnClose="@CloseModal" OnSave="@SaveUser" />
+</div>
+
+<div class="container">
+    <div class="board">
+        @foreach (var status in new[] { "Backlog", "On-Going", "On-Hold", "Done" })
+        {
+            <div class="column">
+                <div class="header">@status.ToUpper()</div>
+                <div class="content"
+                     @ondrop="(e) => OnDropHandler(e, status)"
+                     @ondragover:preventDefault>
+                    <!-- HTML attribute to call JS function -->
+                    @foreach (var task in tasks.Where(t => t.Status == status))
+                    {
+                        <div class="task-card" draggable="true"
+                        @ondragstart="(e) => OnDragStartHandler(e, task.Id)">
+
+                            <strong>@task.Id</strong><br />
+                            <strong>@task.TaskTitle</strong><br />
+                            <small>@task.Description</small><br />
+                            <span class="severity">@task.Severity</span>
+                            <div class="date">
+                                @task.CreatedDate
+                                <button @onclick="() => showEditModal = true" class="upbot"><i class="bi bi-pencil-square"></i></button>
+                                <EditTaskModal IsVisible="@showEditModal" TaskToEdit="@selectedTask" OnSaveEdit="@HandleSave" OnCloseEdit="@(() => showEditModal = false)" />
+                                <button @onclick="() => showDeleteModal = true" class="delbot"> <i class="bi bi-trash"></i></button>
+                                <DeleteTaskModal IsVisible="@showDeleteModal" OnDeleteConfirmed="@ConfirmDelete" OnCancelClicked="@(() => showDeleteModal = false)" />
+
+                            </div>
+
+                        </div>
+                    }
+
+                </div>
+            </div>
+        }
+    </div>
+    <div class="comments">
+        <div class="header">Comments</div>
+        <textarea placeholder="Write a Comment here" @bind="newComment"></textarea>
+        <button class="publish-btn" @onclick="PublishComment">Publish</button>
+        <ul>
+            @foreach (var comment in comments)
+            {
+                <li>@comment</li>
+            }
+        </ul>
+    </div>
+</div>
+@* <script> *@
+@*     <script> *@
+@*         function allowDrop(event) { *@
+@*             event.preventDefault(); *@
+@*             event.dataTransfer.dropEffect = "move"; *@
+@*         } *@
+@* </script> *@
+
+
+@code {
+    //back button
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/pmproject", true); 
+    }
+    private string newComment;
+    private List<string> comments = new();
+
+    //comment side
+    private void PublishComment()
+    {
+        if (!string.IsNullOrWhiteSpace(newComment))
+        {
+            comments.Add(newComment);
+            newComment = string.Empty;
+        }
+    }
+    //create task modal
+    private bool showModal = false;
+
+    private void CloseModal() => showModal = false;
+
+    private void SaveUser()
+    {
+        showModal = false;
+    }
+    //drag and drop
+    private List<Task> tasks = new()
+    {
+        new Task { Id = 1, TaskTitle = "Create Login", Description = "To authorize the users to login in website", Severity = "Medium" , CreatedDate = "03-21-25", Member = "Member 4", Status = "Backlog" }
+    };
+    public class Task
+    {
+        public int Id { get; set; }
+        public string TaskTitle { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string CreatedDate { get; set; }
+        public string Member { get; set; }
+        public string Status { get; set; } = "Backlog";
+    }
+    private int? draggedTaskId;
+
+    private void OnDragStartHandler(DragEventArgs e, int taskId)
+    {
+        draggedTaskId = taskId;
+        Console.WriteLine($"Drag Start: {taskId}");
+    }
+
+    private void OnDropHandler(DragEventArgs e, string newStatus)
+    {
+        try
+        {
+            Console.WriteLine($"Drop on: {newStatus}");
+
+            if (draggedTaskId != null)
+            {
+                var task = tasks.FirstOrDefault(t => t.Id == draggedTaskId);
+                if (task != null)
+                {
+                    task.Status = newStatus;
+                    Console.WriteLine($"Task {task.Id} moved to {newStatus}");
+                }
+                else
+                {
+                    Console.WriteLine("Task not found.");
+                }
+                draggedTaskId = null;
+                StateHasChanged();
+            }
+            else
+            {
+                Console.WriteLine("No task is currently being dragged.");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"Error during drop: {ex.Message}");
+        }
+    }
+
+    // private void OnDragOver(DragEventArgs e)
+    // {
+    //     e.PreventDefault();
+    // }
+    //project title
+    [Parameter]
+    public int ProjectId { get; set; }
+
+    private Projects? currentProject;
+
+    private List<Projects> project = new()
+{
+    new Projects { Id = 1, ProjectTitle = "Project 1", Comment = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+    new Projects { Id = 2, ProjectTitle = "Project 2", Comment = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+    new Projects { Id = 3, ProjectTitle = "Project 3", Comment = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+    new Projects { Id = 4, ProjectTitle = "Project 4", Comment = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+    new Projects { Id = 5, ProjectTitle = "Project 5", Comment = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+    new Projects { Id = 6, ProjectTitle = "Project 6", Comment = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+    new Projects { Id = 7, ProjectTitle = "Project 7", Comment = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+    new Projects { Id = 8, ProjectTitle = "Project 8", Comment = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+    new Projects { Id = 9, ProjectTitle = "Project 9", Comment = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+    new Projects { Id = 10, ProjectTitle = "Project 10", Comment = "Lorem example comment sample", Status = "On-Hold" , CreatedDate = "03/19/25"}
+};
+
+    protected override void OnInitialized()
+    {
+        currentProject = project.FirstOrDefault(p => p.Id == ProjectId);
+    }
+    public class Projects
+    {
+        public int Id { get; set; }
+        public string ProjectTitle { get; set; }
+        public string Comment { get; set; }
+        public string Status { get; set; }
+        public string CreatedDate { get; set; }
+    }
+    //Delete Button
+    private bool showDeleteModal = false; 
+
+    private void ConfirmDelete()
+    {
+        showDeleteModal = false;
+    }
+    // Edit Button
+    private bool showEditModal;
+    private EditTaskModal.EditTaskModel selectedTask;
+
+    private void ShowEditModal(Task tasks)
+    {
+        selectedTask = new EditTaskModal.EditTaskModel
+            {
+                Id = tasks.Id,
+                TaskTitle = tasks.TaskTitle,
+                Description = tasks.Description,
+                //EndDate = tasks.EndDate,
+                Severity = tasks.Severity,
+                Member = tasks.Member
+            };
+        showEditModal = true;
+    }
+
+    private void HideEditModal()
+    {
+        showEditModal = false;
+    }
+
+    private void HandleSave(EditTaskModal.EditTaskModel updatedTask)
+    {
+        showEditModal = false;
+    }
+
+}

@@ -1,0 +1,105 @@
+﻿@layout ProjectManagerLayout
+@page "/projectmanager"
+@using System.Globalization
+@rendermode InteractiveServer
+
+<PageTitle>Task Management</PageTitle>
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleSidebar()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> <!-- Bootstrap user icon -->
+        <span>Project Manager</span>
+    </div>
+</nav>
+
+
+<h1 class="home">Project Manager Dashboard</h1>
+
+
+
+<!-- Dashboard Cards -->
+<div class="container">
+    <div class="row">
+        <div class="card1">
+            <div class="card-body1">
+                <h1>0</h1>
+                <p class="card-text1">Total Number of Project</p>
+            </div>
+        </div>
+        <div class="card2">
+            <div class="card-body2">
+                <h1>0</h1>
+                <p class="card-text2">Total Number of Backlog</p>
+            </div>
+        </div>
+        <div class="card3">
+            <div class="card-body3">
+                <h1>0</h1>
+                <p class="card-text3">Total Number of On-Going</p>
+            </div>
+        </div>
+        <div class="card4">
+            <div class="card-body4">
+                <h1>0</h1>
+                <p class="card-text3">Total Number of On-Hold</p>
+            </div>
+        </div>
+        <div class="card5">
+            <div class="card-body5">
+                <h1>0</h1>
+                <p class="card-text3">Total Number of On-Done</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Table Below the Cards -->
+    <h3>Recently Projects</h3>
+    <table border="1">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Project Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+
+            @foreach (var person in people)
+            {
+                <tr>
+                    <td>@person.Id</td>
+                    <td>@person.ProjectTitle</td>
+                    <td>@person.Description</td>
+                    <td>@person.Status</td>
+                    <td>@person.CreatedDate</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>
+
+@code {
+    private List<Person> people = new()
+    {
+        new Person { Id = 1, ProjectTitle = "Team Task Management", Description = "Lorem example comment", Status = "Backlog" , CreatedDate = "03/19/25"}
+    };
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string ProjectTitle { get; set; }
+        public string Description { get; set; }
+        public string Status { get; set; }
+        public string CreatedDate { get; set; }
+
+    }
+ 
+}
+

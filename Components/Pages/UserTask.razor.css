@@ -1,0 +1,163 @@
+﻿/* Navbar */
+.navbar {
+    background-color: maroon;
+    border-bottom: 3px solid;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Fixes navbar at the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Ensures it covers the full width */
+    margin: 0; /* Removes any unwanted margins */
+    box-sizing: border-box; /* Prevents any unexpected width issues */
+}
+
+    .navbar .menu-icon {
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .navbar .user-section {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .navbar .user-icon {
+        font-size: 20px;
+        margin-right: 5px;
+    }
+
+.user {
+    background-color: maroon;
+    width: 110px;
+    height: 50px;
+    border-radius: 10px;
+}
+
+.projecttitle {
+    text-decoration: none;
+}
+
+.button {
+    color: white;
+}
+
+.back {
+    text-align: start;
+    margin-bottom: 20px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+}
+
+.backbot {
+    padding-top: 60px;
+}
+
+.top-controls {
+    display: flex;
+    justify-content: space-between; /* Pushes items apart */
+    align-items: center;
+    margin-bottom: 15px;
+}
+
+.container {
+    display: flex;
+    border: 3px solid black;
+    height: 500px;
+}
+
+.board {
+    display: flex;
+    flex: 4;
+    border-right: 2px solid black;
+}
+
+
+
+.comments {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    padding: 10px;
+}
+
+    .comments textarea {
+        width: 100%;
+        height: 100px;
+        margin-bottom: 10px;
+    }
+
+.publish-btn {
+    background-color: #8B0000;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    cursor: pointer;
+}
+
+.comments ul {
+    list-style-type: disc;
+    margin-top: 10px;
+    padding-left: 20px;
+}
+
+.board {
+    display: flex;
+    gap: 10px;
+    padding: 10px;
+}
+
+.column {
+    flex: 1;
+    background-color: #ddd;
+    border: 2px solid black;
+    border-radius: 5px;
+    min-height: 400px;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    background-color: #7b0000;
+    color: white;
+    text-align: center;
+    padding: 10px;
+    font-weight: bold;
+    border-bottom: 2px solid black;
+}
+
+.content {
+    flex-grow: 1;
+    padding: 10px;
+    background-color: #e0e0e0;
+}
+
+.task-card {
+    background-color: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 3px;
+    cursor: grab;
+    width: 250px;
+}
+
+.severity {
+    display: inline-block;
+    font-weight: bold;
+    margin-top: 5px;
+}
+
+.date {
+    font-size: 0.8em;
+    color: #555;
+    margin-top: 5px;
+}

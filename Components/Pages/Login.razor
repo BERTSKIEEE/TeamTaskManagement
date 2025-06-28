@@ -1,0 +1,88 @@
+﻿@layout LoginLayout
+@page "/"
+@rendermode InteractiveServer
+@inject AuthenticationService AuthService
+@inject NavigationManager Navigation
+
+<PageTitle>Task Management</PageTitle>
+
+
+<div class="login">
+    <div class="adminlogin-container">
+        <img class="image" src="/Images/login-logo.png" />
+
+        <h3>Login</h3>
+        <select @bind="selectedRole">
+            <option value="Admin">Admin</option>
+            <option value="Project Manager">Project Manager</option>
+            <option value="User">User</option>
+        </select>
+        <div>
+            <label>Email:</label>
+            <input type="text" @bind="email" placeholder="ENTER A EMAIL" />
+        </div>
+        <div>
+            <label>Password:</label>
+            <input type="password" @bind="password" placeholder="ENTER A PASSWORD" />
+
+        </div>
+        <div class="message">
+            <p class="message-text"><strong>@message</strong></p>
+        </div>
+        <div>
+            <button @onclick="HandleLogin" class="btn btn-primary">Login</button>
+        </div>
+    </div>
+</div>
+@code {
+    private string email;
+    private string password;
+    private string message;
+    private string role;
+    private string selectedRole = "Admin";
+
+    private async Task HandleLogin()
+    {
+        if (string.IsNullOrWhiteSpace(email) || string.IsNullOrWhiteSpace(password))
+        {
+            message = "Email and password are required.";
+            return;
+        }
+
+        var isAuthenticated = AuthService.Login(email, password);
+
+        if (isAuthenticated)
+        {
+            message = "Login successful! Redirecting...";
+            await Task.Delay(1500);
+            switch (selectedRole)
+            {
+                case "Admin":
+                    Navigation.NavigateTo("/admin", replace: true);
+                    break;
+              
+                case "Project Manager":
+                    Navigation.NavigateTo("/projectmanager", replace: true);
+                    break;
+                case "User":
+                    Navigation.NavigateTo("/user", replace: true);
+                    break;
+                default:
+                    Navigation.NavigateTo("/", replace: true);
+                    break;
+            }
+        }
+        else
+        {
+            message = "Invalid username or password.";
+        }
+    }
+    public class User
+    {
+        public string email { get; set; } = string.Empty;
+        public string password { get; set; } = string.Empty;
+        public string message { get; set; } = string.Empty;
+        public string role { get; set; } = string.Empty;
+    }
+ 
+}

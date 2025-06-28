@@ -1,0 +1,43 @@
+﻿<div class="nav nav-hidden" id="sidebar">
+    <div class="navtop-row ps-3 navbar navbar-dark">
+        <div class="container-fluid">
+            <a class="navbar-brand" href="projectmanager">
+                <img class="logo" src="/Images/SitesphilLogo.png" alt="Sitephil Logo" />
+            </a>
+        </div>
+    </div>
+    <div class="nav-scrollable" >
+        <nav class="flex-column">
+            <div class="nav-item" >
+                <NavLink class="nav-link" href="projectmanager" style="text-decoration: none">
+                    <div class="icon-text" style="color:white;">
+                        <span class="bi bi-house-door"></span>
+                        <span>Dashboard</span>
+                    </div>
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                    <NavLink class="nav-link" href="pmproject" style="text-decoration: none" >
+                    <div class="icon-text" style="color:white;">
+                        <span class="bi bi-journal-text"></span>
+                        <span>Project</span>
+                    </div>
+
+                </NavLink>
+            </div>
+            <div class="nav-item">
+                <NavLink class="nav-link" href="/" style="text-decoration: none">
+                    <div class="icon-text" style="color:white;">
+                        <span class="bi bi-box-arrow-right"></span>
+                        <span>Logout</span>
+                    </div>
+                </NavLink>
+            </div>
+        </nav>
+    </div>
+</div>
+<script>
+    function toggleSidebar() {
+        document.body.classList.toggle('sidebar-open');
+    }
+</script>

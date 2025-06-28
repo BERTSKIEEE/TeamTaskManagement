@@ -1,0 +1,80 @@
+﻿@if (IsVisible){
+    <div class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h3 class="modal-title">User Details</h3>
+                    <button type="button" class="close text-white" @onclick="Close">X</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label>Employee ID</label>
+                            <input class="form-control" @bind="user.EmployeeId" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>First Name</label>
+                            <input class="form-control" @bind="user.FirstName" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Last Name</label>
+                            <input class="form-control" @bind="user.LastName" />
+                        </div>
+                        <div class="col-12">
+                            <label>Email</label>
+                            <input class="form-control" type="email" @bind="user.Email" />
+                        </div>
+                        <div class="col-12">
+                            <label>Password</label>
+                            <input class="form-control" @bind ="user.Password" />
+                        </div>
+                        <div class="col-12">
+                            <label>Confirm Password</label>
+                            <input class="form-control" @bind="user.ConfirmPassword" />
+                        </div>
+                        <div class="col-md-6">
+                            <label>Phone Number</label>
+                            <input class="form-control" @bind="user.PhoneNumber" />
+                        </div>
+                        <div class="col-12">
+                            <label>Role</label>
+                            <select class="form-select"  @bind="user.Role" >
+                                <option value="">Select Role</option>
+                                <option value="Admin">Admin</option>
+                                <option value="ProjectManager">Project Manager</option>
+                                <option value="User">User</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel" @onclick="Close">Cancel</button>
+                    <button class="save" @onclick="Save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnClose { get; set; }
+    [Parameter] public EventCallback OnSave { get; set; }
+
+    private UserModel user = new();
+
+    private async Task Close() => await OnClose.InvokeAsync();
+    private async Task Save() => await OnSave.InvokeAsync();
+    public class UserModel
+    {
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Password { get; set; }
+        public string ConfirmPassword { get; set; }
+        public string EmployeeId { get; set; }
+        public string PhoneNumber { get; set; }
+        public string Role { get; set; }
+    }
+}
+

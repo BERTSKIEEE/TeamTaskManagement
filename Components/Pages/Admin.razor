@@ -1,0 +1,100 @@
+﻿@layout AdminLayout
+@page "/admin"
+@rendermode InteractiveServer
+@using System.Globalization
+
+
+<PageTitle>Task Management</PageTitle>
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleSidebar()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> <!-- Bootstrap user icon -->
+        <span>ADMIN</span>
+    </div>
+</nav>
+
+
+<h1 class="home">Admin Dashboard</h1>
+
+
+
+<!-- Dashboard Cards -->
+<div class="container">
+    <div class="row">
+        <div class="card1">
+            <div class="card-body1">
+                <h1>0</h1>
+                <p class="card-text1">Total Number of Accounts</p>
+            </div>
+        </div>
+        <div class="card2">
+            <div class="card-body2">
+                <h1>0</h1>
+                <p class="card-text2">Total Number of Project Manager</p>
+            </div>
+        </div>
+        <div class="card3">
+            <div class="card-body3">
+                <h1>0</h1>
+                <p class="card-text2">Total Number of User</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Table Below the Cards -->
+    <h3>Recently Registered</h3>
+    <table border="1">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (people is null || !people.Any())
+            {
+                <tr>
+                    <td colspan="5" class="text-center">No data available</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var person in people)
+                {
+                    <tr>
+                        <td>@person.Id</td>
+                        <td>@person.Name</td>
+                        <td>@person.Email</td>
+                        <td>@person.Role</td>
+                        <td>@person.Status</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+@code {
+    private List<Person> people = new()
+    {
+        new Person { Id = 1, Name = "Admin", Email = "admin@gmail.com", Role = "Admin" , Status = "Enable"},
+        new Person { Id = 2, Name = "Project Manager", Email = "projectmanager@gmail.com", Role = "Project Manager", Status = "Enable"},
+        new Person { Id = 3, Name = "User", Email = "user@gmail.com", Role = "User", Status = "Enable"}
+    };
+
+    public class Person
+    {
+        public int Id { get; set; }
+        public string Name { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public string Status { get; set; }
+
+    }
+}

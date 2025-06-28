@@ -1,0 +1,192 @@
+﻿@layout AdminLayout
+@page "/usermanagement"
+@using TeamTaskManagement.Components
+@rendermode InteractiveServer
+@inject NavigationManager Navigation
+
+<PageTitle>Task Management</PageTitle>
+
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleSidebar()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> 
+        <span>ADMIN</span>
+    </div>
+</nav>
+
+<h1 class="home">User Management</h1>
+<div class="top-controls">
+    <button class="user" style="color:white;" @onclick="()=> showModal = true">Add Users</button>
+    <UserModal IsVisible="@showModal" OnClose="@CloseModal" OnSave="@SaveUser" />
+    <div class="search-container"> 
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search" class="search-input" @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+</div>
+
+<div class="container">
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (people is null || !people.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No data available</td>
+                </tr>
+            }
+            else{
+                @foreach (var person in PagedPeople)
+                {
+                    <tr>
+                        <td>@person.Id</td>
+                        <td>@person.Name</td>
+                        <td>@person.Email</td>
+                        <td>@person.Role</td>
+                        <td style="background-color:@(person.Status == "Enable" ? "lightgreen" : "lightcoral");">
+                            @person.Status
+                        </td>
+
+                        <td>
+                            <EditUserModal IsVisible="@isEditUserModalVisible"
+                                           UserToEdit="@selectedUser"
+                                           OnClose="@HideEditUserModal"
+                                           OnSave="@HandleEditUserSave" />
+
+                            <button class="btn btn-warning" @onclick="@(() => ShowEditUserModal(person))">Edit</button>
+                            <button class="btn @(person.Status == "Active" ? "btn-danger" : "btn-success")"
+                            @onclick="() => ToggleStatus(person.Id)">
+                                @(person.Status == "Enable" ? "Disable" : "Enable") 
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    <Pagination TotalPages="@TotalPages" CurrentPage="@currentPage" OnPageChanged="HandlePageChanged" />
+
+</div> 
+
+@code {
+    private List<Person> people = new()
+    {
+        new Person { Id = "1", FirstName = "John",  LastName = "Doe", Name = "John Doe", Email = "johndoe@gmail.com", Role = "Admin" , Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "2", FirstName = "Jane",  LastName = "Smith",Name = "Jane Smith", Email = "janesmith@gmail.com", Role = "Project Manager", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "3", FirstName = "James",  LastName = "Moore",Name = "James Moore", Email = "jamesmoore@gmail.com", Role = "User", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "4", FirstName = "Jane",  LastName = "De Leon",Name = "Jane Deleon", Email = "janedeleon@gmail.com", Role = "Admin" , Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "5", FirstName = "Jericho",  LastName = "Natividad",Name = "Jericho Natividad", Email = "Jek123@gmail.com", Role = "Project Manager", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "6", FirstName = "JekJek",  LastName = "Nat",Name = "JekJek Nat", Email = "Jeknat456@gmail.com", Role = "User", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "7",FirstName = "James",  LastName = "Bond",Name = "James Bond", Email = "jamesbond@gmail.com", Role = "User", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "8", FirstName = "Monkey",  LastName = "D.Luffy",Name = "Monkey D.Luffy", Email = "luffy@gmail.com", Role = "Admin" , Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "9", FirstName = "Balerinca",  LastName = "Capucinna",Name = "Balerina Capucinna", Email = "brainrot123@gmail.com", Role = "Project Manager", Status = "Enable", PhoneNumber = "091234789"},
+        new Person { Id = "10", FirstName = "Tralalelo",  LastName = "Tralala",Name = "Tralalelo Tralala", Email = "brainrot@gmail.com", Role = "User", Status = "Enable", PhoneNumber = "091234789"}
+    };
+    public class Person
+    {
+        public string Id { get; set; }
+        public string Name { get; set; }
+        public string FirstName { get; set; }
+        public string LastName { get; set; }
+        public string Email { get; set; }
+        public string Role { get; set; }
+        public string Status { get; set; }
+        public string PhoneNumber { get; set; }
+
+    }
+    private void ToggleStatus(string id)
+    {
+        var person = people.FirstOrDefault(p => p.Id == id);
+        if (person != null)
+        {
+            person.Status = person.Status == "Enable" ? "Disable" : "Enable";
+        }
+    }
+    //For Modal
+    private bool showModal = false;
+
+    private void CloseModal() => showModal = false;
+
+    private void SaveUser()
+    {
+        showModal = false;
+    }
+    //For Edit Modal
+    private bool isEditUserModalVisible;
+    private EditUserModal.EditUserModel selectedUser;
+
+    private void ShowEditUserModal(Person person)
+    {
+        selectedUser = new EditUserModal.EditUserModel
+            {
+                Id = person.Id,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Email = person.Email,
+                Role = person.Role,
+                PhoneNumber = person.PhoneNumber,
+
+            };
+        isEditUserModalVisible = true;
+    }
+
+    private void HideEditUserModal()
+    {
+        isEditUserModalVisible = false;
+    }
+
+    private void HandleEditUserSave(EditUserModal.EditUserModel updatedUser)
+    {
+        isEditUserModalVisible = false;
+    }
+    //For Pagination
+    private int currentPage = 1;
+
+    private void HandlePageChanged(int page)
+    {
+        currentPage = page;
+    }
+    private int PageSize = 7;
+    private int TotalPages => (int)Math.Ceiling(people.Count / (double)PageSize);
+
+    private IEnumerable<Person> PagedPeople =>
+    FilteredPeople.Skip((currentPage - 1) * PageSize).Take(PageSize);
+
+    private IEnumerable<Person> FilteredPeople =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? people
+            : people.Where(p =>
+                (p.Id?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Name?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Email?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Role?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Status?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)
+            );
+
+    private string searchTerm = string.Empty;
+    private string SearchTerm
+    {
+        get => searchTerm;
+        set
+        {
+            searchTerm = value;
+            currentPage = 1;
+        }
+    }
+
+
+
+}

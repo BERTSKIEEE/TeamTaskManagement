@@ -1,0 +1,278 @@
+﻿/* General Styles */
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f8f9fa;
+    margin: 0;
+    padding: 0;
+}
+
+    body.sidebar-open .nav {
+        width: 150px;
+    }
+
+    body.sidebar-open .container, body.sidebar-open .home {
+        margin-left: 160px;
+    }
+
+    body:not(.sidebar-open) .nav {
+        width: 0;
+        overflow: hidden;
+    }
+
+    body:not(.sidebar-open) .container {
+        margin-left: 10px;
+    }
+
+.container {
+    padding: 20px;
+}
+
+.toggle-btn {
+    background-color: maroon;
+    color: white;
+}
+
+.home {
+    text-align: start;
+    margin-bottom: 20px;
+    padding-top: 30px;
+    font-size: 35px;
+    font-weight: bold;
+    color: #333;
+}
+
+
+/* Navbar */
+.navbar {
+    background-color: maroon;
+    border-bottom: 3px solid;
+    padding: 10px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    position: fixed; /* Fixes navbar at the top */
+    top: 0;
+    left: 0;
+    width: 100%; /* Ensures it covers the full width */
+    margin: 0; /* Removes any unwanted margins */
+    box-sizing: border-box; /* Prevents any unexpected width issues */
+}
+
+    .navbar .menu-icon {
+        font-size: 24px;
+        color: white;
+        cursor: pointer;
+    }
+
+    .navbar .user-section {
+        display: flex;
+        align-items: center;
+        color: white;
+        font-weight: bold;
+        font-size: 16px;
+    }
+
+    .navbar .user-icon {
+        font-size: 20px;
+        margin-right: 5px;
+    }
+
+
+/* Dashboard Cards */
+.row {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+    gap: 15px;
+}
+
+
+.card1, .card2, .card3, .card4, .card5 {
+    flex: 1;
+    min-width: 150px;
+    max-width: 250px;
+    padding: 20px;
+    text-align: center;
+    border-radius: 10px;
+    background-color: maroon;
+    border: 3px solid black;
+    color: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.card-body1, .card-body2, .card-body3, .card-body4, .card-body5 {
+    font-size: 30px;
+    font-weight: bold;
+    padding-top: 20px;
+}
+
+.card-text1, .card-text2, .card-text3, .card-text4, .card-text5 {
+    font-size: 20px;
+    font-weight: 500;
+}
+
+/* Table Styling */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 10px;
+    background-color: white;
+}
+
+table, th, td {
+    border: 3px solid black;
+}
+
+th, td {
+    padding: 12px;
+    text-align: center;
+}
+
+th {
+    background-color: maroon;
+    color: white;
+    font-weight: bold;
+}
+
+.week {
+    background-color: #E14141;
+    color: white;
+    font-weight: bold;
+}
+/* Calendar Styling */
+.calendar-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 10px;
+    border: 2px solid;
+    border-radius: 8px;
+    background-color: maroon;
+    color: white;
+}
+
+.calendar-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 300px;
+    margin-bottom: 10px;
+}
+
+.month-title {
+    font-weight: bold;
+    font-size: 1.2em;
+}
+
+.calendar-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: center;
+}
+
+    .calendar-table th, .calendar-table td {
+        padding: 5px;
+        border: 2px solid black;
+    }
+
+.current-month {
+    background-color: white;
+    color: black;
+    font-weight: bold;
+}
+
+.other-month {
+    background-color: #f0f0f0;
+    color: #ccc;
+}
+
+.nav-button {
+    border: none;
+    background: none;
+    color: white;
+    font-size: 1.5em;
+    cursor: pointer;
+}
+/* Form Styling */
+.form-group {
+    margin-top: 20px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    max-width: 400px;
+    margin-bottom: 10px;
+}
+
+.input-group-text {
+    background-color: #007bff;
+    color: white;
+    padding: 5px 10px;
+    border-radius: 5px;
+}
+
+.form-control {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+.btn {
+    padding: 10px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+    .btn-primary:hover {
+        background-color: #0056b3;
+    }
+
+.btn-success {
+    background-color: #28a745;
+    color: white;
+}
+
+.btn-danger {
+    background-color: #dc3545;
+    color: white;
+}
+
+    .btn-success:hover, .btn-danger:hover {
+        opacity: 0.8;
+    }
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .row {
+        flex-direction: column;
+        align-items: center;
+    }
+
+    .card1, .card2, .card3 {
+        width: 90%;
+    }
+
+    table {
+        font-size: 14px;
+    }
+
+    .input-group {
+        width: 100%;
+    }
+
+    .calendar-container {
+        width: 100%;
+        max-width: 300px;
+    }
+}

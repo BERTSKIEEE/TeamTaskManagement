@@ -1,0 +1,99 @@
+﻿@if (IsVisible)
+{
+    <div class="modal-overlay">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h3 class="modal-title">Task Details</h3>
+                    <button type="button" class="close text-white" @onclick="Close">X</button>
+                </div>
+                <div class="modal-body">
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label>Task ID</label>
+                            <input class="form-control" @bind="edittask.Id" readonly/>
+                        </div>
+                        <div class="col-md-6">
+                            <label>Task Title</label>
+                            <input class="form-control" @bind="edittask.TaskTitle" />
+                        </div>
+                        <div class="form-group mb-3">
+                            <label>DESCRIPTION</label>
+                            <textarea class="form-control" rows="3" @bind="edittask.Description"></textarea>
+                        </div>
+                        <div class="col-md-3">
+                            <label>Due Date</label>
+                            <input type="date" class="form-control" @bind="edittask.EndDate" />
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>SEVERITY</label>
+                            <select class="form-control" @bind="edittask.Severity">
+                                <option value="">Select</option>
+                                <option>Low</option>
+                                <option>Medium</option>
+                                <option>High</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label>Assigned To</label>
+                            <select class="form-control" @bind="edittask.Member">
+                                <option value="">Select</option>
+                                <option>Member 1</option>
+                                <option>Member 2</option>
+                                <option>Member 3</option>
+                                <option>Member 4</option>
+                                <option>Member 5</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="cancel" @onclick="Close">Cancel</button>
+                    <button class="save" @onclick="Save">Save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter] public bool IsVisible { get; set; }
+    [Parameter] public EventCallback OnCloseEdit { get; set; }
+    [Parameter] public EventCallback <EditTaskModel> OnSaveEdit { get; set; }
+    [Parameter] public EditTaskModel TaskToEdit { get; set; }
+
+    private EditTaskModel edittask = new();
+
+
+    private async Task Close() => await OnCloseEdit.InvokeAsync();
+    private async Task Save() => await OnSaveEdit.InvokeAsync();
+
+    public class EditTaskModel
+    {
+        public int Id { get; set; }
+        public string TaskTitle { get; set; }
+        public DateTime? EndDate { get; set; }
+        public string Description { get; set; }
+        public string Severity { get; set; }
+        public string Member { get; set; }
+    }
+    protected override void OnParametersSet()
+    {
+        if (TaskToEdit != null)
+        {
+            edittask = new EditTaskModel
+                {
+                    Id = TaskToEdit.Id,
+                    TaskTitle = TaskToEdit.TaskTitle,
+                    Description = TaskToEdit.Description,
+                    Severity = TaskToEdit.Severity,
+                    Member = TaskToEdit.Member
+                };
+        }
+    }
+
+}

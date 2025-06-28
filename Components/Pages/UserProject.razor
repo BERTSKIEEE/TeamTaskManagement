@@ -1,0 +1,138 @@
+﻿@layout UserLayout
+@page "/userproject"
+@using System.Globalization
+@rendermode InteractiveServer
+
+<PageTitle>Task Management</PageTitle>
+<nav class="navbar">
+    <div class="menu-icon">
+        <a class="toggle-btn" onclick="toggleSidebar()">☰</a>
+    </div>
+
+    <div class="user-section">
+        <i class="bi bi-person user-icon"></i> <!-- Bootstrap user icon -->
+        <span>USER</span>
+    </div>
+</nav>
+
+
+
+<h1 class="home">Project</h1>
+<div class="top-controls">
+    <h3>List of All Projects</h3>
+    <div class="search-container">
+        <i class="bi bi-search"></i>
+        <input type="text" placeholder="Search" class="search-input" @bind="SearchTerm" @bind:event="oninput" />
+    </div>
+</div>
+<div class="container">
+
+    <table border="1">
+
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Project Title</th>
+                <th>Description</th>
+                <th>Status</th>
+                <th>Created Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (project is null || !project.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center">No data available</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var project in PagedFilteredProjects)
+                {
+                    <tr>
+                        <td>@project.Id</td>
+                        <td>
+                            <a href="/usertask" style="color:black" class="projecttitle">@project.ProjectTitle</a>
+                        </td>
+                        <td>@project.Description</td>
+                        <td>@project.Status</td>
+                        <td>@project.CreatedDate</td>
+                    </tr>
+                }
+            }
+        </tbody>
+    </table>
+</div>
+<div class="pagination">
+    <Pagination TotalPages="@TotalPages" CurrentPage="@currentPage" OnPageChanged="HandlePageChanged" />
+</div>
+@code {
+    private List<Projects> project = new()
+    {
+       new Projects { Id = 1, ProjectTitle = "project 1", Description = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+       new Projects { Id = 2, ProjectTitle = "project 2", Description = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+       new Projects { Id = 3, ProjectTitle = "project 3", Description = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+       new Projects { Id = 4, ProjectTitle = "project 4", Description = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+       new Projects { Id = 5, ProjectTitle = "project 5", Description = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+       new Projects { Id = 6, ProjectTitle = "project 6", Description = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+       new Projects { Id = 7, ProjectTitle = "project 7", Description = "Lorem example comment sample", Status = "On-Going" , CreatedDate = "03/19/25"},
+       new Projects { Id = 8, ProjectTitle = "project 8", Description = "Lorem example comment sample", Status = "Done" , CreatedDate = "03/19/25"},
+       new Projects { Id = 9, ProjectTitle = "project 9", Description = "Lorem example comment sample", Status = "Backlog" , CreatedDate = "03/19/25"},
+       new Projects { Id = 10, ProjectTitle = "project 10", Description = "Lorem example comment sample", Status = "On-Hold" , CreatedDate = "03/19/25"}
+
+    };
+
+    public class Projects
+    {
+        public int Id { get; set; }
+        public string ProjectTitle { get; set; }
+        public string Description { get; set; }
+        public string Status { get; set; }
+        public string CreatedDate { get; set; }
+
+    }
+    private bool showModal = false;
+
+    private void CloseModal() => showModal = false;
+
+    private void SaveUser()
+    {
+        showModal = false;
+    }
+    //For Pagination
+    private int currentPage = 1;
+
+    private void HandlePageChanged(int page)
+    {
+        currentPage = page;
+        // Fetch or update your data based on the new page here.
+    }
+    private int PageSize = 7;
+    private int TotalPages => (int)Math.Ceiling(project.Count / (double)PageSize);
+
+    private IEnumerable<Projects> PagedFilteredProjects =>
+    FilteredProjects.Skip((currentPage - 1) * PageSize).Take(PageSize);
+
+    private IEnumerable<Projects> FilteredProjects =>
+        string.IsNullOrWhiteSpace(searchTerm)
+            ? project
+            : project.Where(p =>
+                (p.ProjectTitle?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false) ||
+                (p.Status?.Contains(searchTerm, StringComparison.OrdinalIgnoreCase) ?? false)
+            );
+
+
+    private string searchTerm = string.Empty;
+    private string SearchTerm
+    
+    {
+        get => searchTerm;
+        set
+        {
+            searchTerm = value;
+            currentPage = 1; // Reset to first page on search
+        }
+    }
+
+
+}
